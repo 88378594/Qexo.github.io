@@ -7,8 +7,8 @@
  * @version    $Id$
  */
  
-/** 开启https */ 
-define('__TYPECHO_SECURE__',true);
+ 
+ define('__TYPECHO_SECURE__',true);
 
 /** 定义根目录 */
 define('__TYPECHO_ROOT_DIR__', dirname(__FILE__));
@@ -38,10 +38,13 @@ $db = new Typecho_Db('Pdo_Mysql', 'typecho_');
 $db->addServer(array (
   'host' => 'mysql2.sqlpub.com,:,3307',
   'user' => 'wuying1',
-  'password' => 'uNzL20iNf9UXEIDJ',
-  'charset' => 'utf8mb4',
+  'password' => '数据库密码',
+  'charset' => 'utf8',
   'port' => '3307',
   'database' => 'wuying1',
   'engine' => 'MyISAM',
 ), Typecho_Db::READ | Typecho_Db::WRITE);
 Typecho_Db::set($db);
+
+/** 开启HTTPS */
+define('__TYPECHO_SECURE__',true);
