@@ -1,54 +1,99 @@
 <?php
-include 'common.php';
 
-if ($user->hasLogin()) {
-    $response->redirect($options->adminUrl);
+error_reporting(0);
+include "config.php";
+include "ini.php";
+include "tool.php";
+if(!empty($_GET['action'])){
+	if(empty($_POST['name']) or empty($_POST['pass'])){
+		echo '喝多了？啥都不写你想干啥？？？<br/>';
+	}else{
+		if($_POST['name']==$admin_user && $_POST['pass']==$admin_pwd){
+			$token=md5($admin_user.md5($admin_pwd).'4#4!@%');
+			echo '<script language="javascript" type="text/javascript">
+					document.cookie="token='.$token.'";
+           			window.location.href="index.php";
+    			</script>';
+		}else
+			echo '非管理员禁止进入！！！<br/>';
+		
+	}
+exit();
 }
-$rememberName = htmlspecialchars(Typecho_Cookie::get('__typecho_remember_name'));
-Typecho_Cookie::delete('__typecho_remember_name');
-
-$bodyClass = 'body-100';
-
-include 'header.php';
 ?>
-<div class="typecho-login-wrap">
-    <div class="typecho-login">
-        <h1><a href="http://typecho.org" class="i-logo">Typecho</a></h1>
-        <form action="<?php $options->loginAction(); ?>" method="post" name="login" role="form">
-            <p>
-                <label for="name" class="sr-only"><?php _e('用户名'); ?></label>
-                <input type="text" id="name" name="name" value="<?php echo $rememberName; ?>" placeholder="<?php _e('用户名'); ?>" class="text-l w-100" autofocus />
-            </p>
-            <p>
-                <label for="password" class="sr-only"><?php _e('密码'); ?></label>
-                <input type="password" id="password" name="password" class="text-l w-100" placeholder="<?php _e('密码'); ?>" />
-            </p>
-            <p class="submit">
-                <button type="submit" class="btn btn-l w-100 primary"><?php _e('登录'); ?></button>
-                <input type="hidden" name="referer" value="<?php echo htmlspecialchars($request->get('referer')); ?>" />
-            </p>
-            <p>
-                <label for="remember"><input type="checkbox" name="remember" class="checkbox" value="1" id="remember" /> <?php _e('下次自动登录'); ?></label>
-            </p>
-        </form>
-        
-        <p class="more-link">
-            <a href="<?php $options->siteUrl(); ?>"><?php _e('返回首页'); ?></a>
-            <?php if($options->allowRegister): ?>
-            &bull;
-            <a href="<?php $options->registerUrl(); ?>"><?php _e('用户注册'); ?></a>
-            <?php endif; ?>
-        </p>
-    </div>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, ini1tial-scale=1"/>
+  <title><?php echo $ini['title']?> </title>
+ <meta name="keywords" content="<?php echo $ini['keywords']?>" />
+<meta name="description" content="<?php echo $ini['description']?>" />
+ <link href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
+  <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+  <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script src="public/js/api.js"></script>
+	<?=$script?>
+	<link rel="shortcut icon" href="favicon.ico">
+    <link href="css/bootstrap.min14ed.css?v=3.3.6" rel="stylesheet">
+    <link href="css/font-awesome.min93e3.css?v=4.4.0" rel="stylesheet">
+    <link href="css/animate.min.css" rel="stylesheet">
+    <link href="css/style.min862f.css?v=4.1.0" rel="stylesheet">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="/css/bootstrap.min14ed.css?v=3.3.6" rel="stylesheet">
+    <link href="/css/font-awesome.min93e3.css?v=4.4.0" rel="stylesheet">
+    <link href="/css/animate.min.css" rel="stylesheet">
+    <link href="/css/style.min862f.css?v=4.1.0" rel="stylesheet">
+   <script>
+   $(document).keypress(function(e) { 
+    // 回车键事件 
+    if(e.which == 13) { 
+   		jQuery("#login").click(); 
+       } 
+   }); 
+	$(document).ready(function(){
+	  $('#login').click(function(){
+	  	$("#login").button('loading');
+	    $.post("login.php?action=save",
+	    {
+	      name:$('#name').val(),
+	      pass:$('#pass').val(),
+	    },
+	    function(data,status){
+	      $("#login").button('reset');
+	      $('#result').html(data);
+	    });
+	  });
+	});
+	</script>
+</head>
+<body style="width:80%;height:100%;margin:0 auto;">
+
+<div class="" style="padding: 10px 10px 10px;margin-top:2%;">
+
+	<div class="page-header">
+   <h1>IF网站导航系统 管理员登陆
+   </h1>
+	</div>
+
+	<p id="result" style="color:red;text-align:center;"></p>
+   <form class="bs-example bs-example-form" role="form">
+      <div class="input-group">
+         <span class="input-group-addon">管理员名称</span>
+         <input id="name" type="text" class="form-control" placeholder="管理员名称">
+      </div>
+      <br>
+      <div class="input-group">
+         <span class="input-group-addon">管理员密码</span>
+         <input id="pass" type="password" class="form-control" placeholder="管理员密码">
+      </div>
+	<br/>
+    <button type="button" class="btn btn-primary btn-lg btn-block" id="login" 
+	   data-complete-text="Loading finished">登陆后台
+	</button>
+
+   </form>
 </div>
-<?php 
-include 'common-js.php';
-?>
-<script>
-$(document).ready(function () {
-    $('#name').focus();
-});
-</script>
-<?php
-include 'footer.php';
-?>
+
+</body>
+</html>
